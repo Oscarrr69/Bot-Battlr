@@ -1,23 +1,41 @@
-import logo from './logo.svg';
+import React, { useState, useEffect} from 'react';
 import './App.css';
+import BotArmy from './components/botArmy';
+import BotCollection from './components/BotCollection';
 
 function App() {
+
+  const [isBot, setIsBot] = useState([])
+  const [selectedBots, setSelectedBots] = useState([]);
+
+
+        useEffect(() => {
+        fetch("https://json-server-vercel-eight-alpha.vercel.app/bots")
+        .then(res => res.json())
+        .then(data =>{
+            setIsBot(data)
+        }
+            )
+    }, []);
+    
+
+    const handleAddBot = (bota) => {
+      if (!selectedBots.includes(bota) && selectedBots.length < 4) {
+        setSelectedBots([...selectedBots, bota]);
+      }
+    }
+  
+
+      const handleReleaseBot = (bota) => {
+        setSelectedBots(selectedBots.filter(bot => bot !== bota));
+      }
+    
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+        <BotArmy selectedBots={selectedBots} 
+          handleReleaseBot={handleReleaseBot}/>
+        <BotCollection setIsBot={setIsBot} isBot={isBot} handleAddBot={handleAddBot} handleReleaseBot={handleReleaseBot}/>  
     </div>
   );
 }
